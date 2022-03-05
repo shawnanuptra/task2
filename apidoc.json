@@ -1,0 +1,8 @@
+{
+	"name": "Inventory API Docs",
+	"version": "1.0.0",
+	"description": "Official documentation of the Inventory API. Built with Node and Express",
+	"template": {
+		"forceLanguage": "en"
+	}
+}

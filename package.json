@@ -1,19 +1,20 @@
 {
-  "name": "assessment1-task2-api",
-  "version": "1.0.0",
-  "description": "A basic api built for assessment1",
-  "main": "api.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Shawn A. M.",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.3",
-    "multer": "^1.4.4",
-    "sqlite3": "^5.0.2"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.15"
-  }
+	"name": "assessment1-task2-api",
+	"version": "1.0.0",
+	"description": "A basic api built for assessment1",
+	"main": "api.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Shawn A. M.",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.17.3",
+		"multer": "^1.4.4",
+		"sqlite3": "^5.0.2"
+	},
+	"devDependencies": {
+		"apidoc": "^0.50.4",
+		"nodemon": "^2.0.15"
+	}
 }

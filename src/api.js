@@ -7,15 +7,49 @@ const db = new sqlite3.Database('assetsDB.db');
 const multer = require('multer');
 const upload = multer();
 
-
-// GET /assets/ endpoint - shows all assets in json format
+/**
+ * @api {get} /assets Displays in JSON all available assets
+ * @apiVersion 1.0.0
+ * @apiName GetAllAssets
+ * @apiGroup Inventory
+ *
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    [{
+ *      "id": 1,
+ *      "type": "printer",
+ *      "location": "St Peters"
+ *    },
+ *      {
+ *      "id": 2,
+ *      "type": "phone",
+ *      "location": "CitySpace"
+ *      }]
+ * @apiErrorExample {json} List error
+ *   HTTP/1.1 500 Internal Server Error
+ */
 app.get('/assets', (req, res) => {
     db.all('select * from assets', (err, rows) => {
         res.jsonp(rows);
     })
 })
 
-// GET /assets/:id - show asset with specific id
+/**
+ * @api {get} /assets/:id Show asset with the specified id
+ * @apiVersion 1.0.0
+ * @apiName GetAssetFromID
+ * @apiGroup Inventory
+ *
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    [{
+ *      "id": 1,
+ *      "type": "printer",
+ *      "location": "St Peters"
+ *    }]
+ * @apiErrorExample {json} List error
+ *   HTTP/1.1 500 Internal Server Error
+ */
 app.get('/assets/:id', (req, res) => {
     const id = req.params.id
     db.get(`select * from assets where id = ${id}`, (err, rows) => {
@@ -23,7 +57,22 @@ app.get('/assets/:id', (req, res) => {
     })
 })
 
-// GET /assets/:type - show asset with specific type
+/**
+ * @api {get} /assets/:type Show asset with the specified type
+ * @apiVersion 1.0.0
+ * @apiName GetAssetsFromType
+ * @apiGroup Inventory
+ *
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    [{
+ *      "id": 3,
+ *      "type": "monitor",
+ *      "location": "Northallerton"
+ *    }]
+ * @apiErrorExample {json} List error
+ *   HTTP/1.1 500 Internal Server Error
+ */
 app.get('/assets/:type', (req, res) => {
     const type = req.params.type;
     db.all(`select * from assets where type = ${type}`, (err, rows) => {
@@ -31,9 +80,25 @@ app.get('/assets/:type', (req, res) => {
     })
 })
 
-// GET /assets/:location - show asset with specific location
+/**
+ * @api {get} /assets/:location Show asset with the specified location
+ * @apiVersion 1.0.0
+ * @apiName GetAssetsFromLocation
+ * @apiGroup Inventory
+ *
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    [{
+ *      "id": 2,
+ *      "type": "monitor",
+ *      "location": "CitySpace"
+ *    }]
+ * @apiErrorExample {json} List error
+ *   HTTP/1.1 500 Internal Server Error
+ */
 app.get('/assets/:location', (req, res) => {
     const location = req.params.location;
+    //todo: regex or something -> CitySpace has to be same as cityspace - easier in URL
     db.all(`select * from assets where location = ${location}`, (err, rows) => {
         res.jsonp(rows)
     })
@@ -92,7 +157,27 @@ app.get('/assets/:location', (req, res) => {
 // })
 **/
 
-// POST /add - add item to database through form fields
+
+/**
+ * @api {post} /add Add new asset to database
+ * @apiVersion 1.0.0
+ * @apiName Addasset
+ * @apiGroup Inventory
+ * @apiParam {String} type The type of asset that is going to be added. e.g. monitor, phone, laptop, etc.
+ * @apiParam {String} location The location of the asset. CitySpace, St Peters, or Northallerton
+ *
+ * @apiParamExample {json} Input
+ *    {
+ *      "type": "phone",
+ *      "location": "CitySpace"
+ *    }
+ * 
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 201 OK
+ * 
+ * @apiErrorExample Error-response:
+ *    HTTP/1.1 500 Server error
+ */
 app.post('/add', upload.array(), (req, res) => {
     //get from POST form fields
     const type = req.body.type;
@@ -111,8 +196,29 @@ app.post('/add', upload.array(), (req, res) => {
     )
 })
 
-// PUT /assets/:id - to edit an item with the selected id
-app.put('/asssets/:id', upload.array(), (req, res) => {
+/**
+ * @api {put} /assets/:id Edit an asset with specified id
+ * @apiVersion 1.0.0
+ * @apiName EditAsset
+ * @apiGroup Inventory
+ * @apiParam {Number} id The id of the asset
+ * @apiParam {String} type The type of asset that is going to be updated. e.g. monitor, phone, laptop, etc.
+ * @apiParam {String} location The location of the asset. CitySpace, St Peters, or Northallerton
+ *
+ * @apiParamExample {json} Input
+ *    {
+ *      "id" : 3,
+ *      "type": "phone",
+ *      "location": "CitySpace"
+ *    }
+ * 
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 201 OK
+ * 
+ * @apiErrorExample Error-response:
+ *    HTTP/1.1 500 Server error
+ */
+app.put('/assets/:id', upload.array(), (req, res) => {
 
     const id = req.params.id;
     //get from POST form fields
@@ -132,8 +238,23 @@ app.put('/asssets/:id', upload.array(), (req, res) => {
     )
 })
 
-// DELETE /assets/:id - to delete an item with the selected id
-app.delete('/asset/:id', function (req, res) {
+/**
+ * @api {delete} /assets/:id Delete the asset from the database with the specified id
+ * @apiVersion 1.0.0
+ * @apiName DeleteAsset
+ * @apiGroup Inventory
+ * @apiParam {id} id The id of the asset that is going to be deleted
+ *
+ * @apiParamExample {json} Input
+ *    {"id" : 3}
+ * 
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 201 OK
+ * 
+ * @apiErrorExample Error-response:
+ *    HTTP/1.1 500 Server error
+ */
+app.delete('/assets/:id', function (req, res) {
 
     const id = req.params.id;
 
