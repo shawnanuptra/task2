@@ -270,6 +270,5 @@ app.delete('/assets/:id', function (req, res) {
         });
 });
 
-
-//listening at port 3000: access through web browser
-app.listen(3000); 
+//export for start.js - allows testing and publishing
+module.exports = app; 
