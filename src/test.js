@@ -28,19 +28,19 @@ describe('GET /assets/2', () => {
     });
 });
 
-//3. testing GET /assets/type/:type
-describe('GET /assets/type/:type', () => {
+//3. testing GET /type/:type
+describe('GET /type/:type', () => {
     it('respond with JSON of assets with specified type', (done) => {
         request
-            .get('/assets/type/printer')
+            .get('/type/printer')
             .set('Accept', 'application/JSON')
             .expect('content-type', /json/)
             .expect(200, done)
     });
 });
 
-//4. testing GET /assets/location/:location
-describe('GET /assets/location/:location', () => {
+//4. testing GET /location/:location
+describe('GET /location/:location', () => {
     it('respond with JSON of assets with specified location', (done) => {
         request
             .get('/assets/location/CitySpace')
@@ -111,7 +111,7 @@ describe('GET /search?type=__', () => {
     });
 });
 //10. testing GET /search with 'location'
-describe('GET /search?location__&type=__', () => {
+describe('GET /search?location__', () => {
     it('displays in JSON the results', (done) => {
         request
             .get('/search?location=city')
