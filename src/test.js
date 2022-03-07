@@ -1,6 +1,7 @@
 //DECLARATIONS
 const app = require('./api.js')
-const supertest = require('supertest')
+const supertest = require('supertest');
+const res = require('express/lib/response');
 const request = supertest(app)
 
 //TESTS
@@ -80,7 +81,7 @@ describe('PUT /assets/1', () => {
 });
 
 //7. testing DELETE /assets/:id
-describe('delete /assets/1', () => {
+describe('DELETE /assets/1', () => {
     it('sends a 200 success code', (done) => {
         request
             .delete('/assets/1')
@@ -89,4 +90,40 @@ describe('delete /assets/1', () => {
                 done();
             })
     })
+});
+
+//8. testing GET /search with 2 params
+describe('GET /search?location__&type=__', () => {
+    it('displays in JSON the results', (done) => {
+        request
+            .get('/search?location=city&type=printer')
+            .set('Accept', 'application/JSON')
+            .expect('content-type', /json/)
+            .expect(200, done)
+    });
+});
+//9. testing GET /search with 'type'
+describe('GET /search?type=__', () => {
+    it('displays in JSON the results', (done) => {
+        request
+            .get('/search?type=printer')
+            .expect(302, done)
+    });
+});
+//10. testing GET /search with 'location'
+describe('GET /search?location__&type=__', () => {
+    it('displays in JSON the results', (done) => {
+        request
+            .get('/search?location=city')
+            .expect(302, done)
+    });
+});
+
+//11. testing GET /search with no params
+describe('GET /search', () => {
+    it('displays in JSON the results', (done) => {
+        request
+            .get('/search')
+            .expect(302, done)
+    });
 });
