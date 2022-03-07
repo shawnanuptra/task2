@@ -4,7 +4,8 @@
 	"description": "A basic api built for assessment1",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest"
+		"test": "jest",
+		"doc" : "apidoc -i src -o apidoc"
 	},
 	"author": "Shawn A. M.",
 	"license": "ISC",
