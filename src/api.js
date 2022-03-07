@@ -67,7 +67,7 @@ app.get('/assets/:id', (req, res) => {
 })
 
 /**
- * @api {get} /assets/:type Show asset with the specified type
+ * @api {get} /type/:type Show asset with the specified type
  * @apiVersion 1.0.0
  * @apiName GetAssetsFromType
  * @apiGroup Inventory
@@ -82,7 +82,7 @@ app.get('/assets/:id', (req, res) => {
  * @apiErrorExample {json} List error
  *   HTTP/1.1 500 Internal Server Error
  */
-app.get('/assets/type/:type', (req, res) => {
+app.get('/type/:type', (req, res) => {
     const type = req.params.type;
     db.all(`select * from assets where type like '${type}'`, (err, rows) => {
         //prints error, if err is not null
@@ -94,7 +94,7 @@ app.get('/assets/type/:type', (req, res) => {
 })
 
 /**
- * @api {get} /assets/:location Show asset with the specified location
+ * @api {get} /location/:location Show asset with the specified location
  * @apiVersion 1.0.0
  * @apiName GetAssetsFromLocation
  * @apiGroup Inventory
@@ -109,7 +109,7 @@ app.get('/assets/type/:type', (req, res) => {
  * @apiErrorExample {json} List error
  *   HTTP/1.1 500 Internal Server Error
  */
-app.get('/assets/location/:location', (req, res) => {
+app.get('/location/:location', (req, res) => {
     const location = req.params.location;
     db.all(`select * from assets where upper(location) like upper('%${location}%')`, (err, rows) => {
         //prints error, if err is not null
@@ -136,7 +136,7 @@ app.get('/assets/location/:location', (req, res) => {
  *    }
  * 
  * @apiSuccessExample Success-Response:
- *     HTTP/1.1 201 OK
+ *     HTTP/1.1 201 Created
  * 
  * @apiErrorExample Error-response:
  *    HTTP/1.1 500 Server error
@@ -176,7 +176,7 @@ app.post('/add', upload.array(), (req, res) => {
  *    }
  * 
  * @apiSuccessExample Success-Response:
- *     HTTP/1.1 201 OK
+ *     HTTP/1.1 200 OK
  * 
  * @apiErrorExample Error-response:
  *    HTTP/1.1 500 Server error
@@ -194,7 +194,7 @@ app.put('/assets/:id', upload.array(), (req, res) => {
                 console.log(error);
                 res.status(500);
             } else {
-                res.status(201)
+                res.status(200)
             }
             res.end();
         }
@@ -212,7 +212,7 @@ app.put('/assets/:id', upload.array(), (req, res) => {
  *    {"id" : 3}
  * 
  * @apiSuccessExample Success-Response:
- *     HTTP/1.1 201 OK
+ *     HTTP/1.1 204 No Content
  * 
  * @apiErrorExample Error-response:
  *    HTTP/1.1 500 Server error
@@ -227,14 +227,33 @@ app.delete('/assets/:id', function (req, res) {
                 console.err(error);
                 res.status(500); //error
             } else {
-                res.status(201); //deleted 
+                res.status(204); //deleted 
             }
             res.end();
         });
 });
 
-// GET /assets/search?type=__&?location=__ - show assets that passes the queries
-// Shows all assets if there are no parameters
+
+/**
+ * @api {get} /search Search assets with 1 or more parameters
+ * @apiVersion 1.0.0
+ * @apiName SearchAsset
+ * @apiGroup Inventory
+ * @apiParam {String} type The type of asset that is going to be added. e.g. monitor, phone, laptop, etc.
+ * @apiParam {String} location The location of the asset. CitySpace, St Peters, or Northallerton
+ *
+ * @apiParamExample {json} Input
+ *    {
+ *      "type": "phone",
+ *      "location": "CitySpace"
+ *    }
+ * 
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 302 Found
+ * 
+ * @apiErrorExample Error-response:
+ *    HTTP/1.1 500 Server error
+ */
 app.get('/search', (req, res) => {
 
     //get the type and location params
@@ -255,7 +274,7 @@ app.get('/search', (req, res) => {
         //if type is not null, but location is
         case (type !== null && location === null):
             //redirect to /type/:type
-            res.redirect(`../location/${type}`)
+            res.redirect(`../type/${type}`)
 
             break;
 
