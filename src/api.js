@@ -1,8 +1,9 @@
 const express = require('express');
+const { redirect } = require('express/lib/response');
 const app = express();
 
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('assetsDB.db');
+const db = new sqlite3.Database('./assetsDB.db');
 
 const multer = require('multer');
 const upload = multer();
@@ -81,9 +82,9 @@ app.get('/assets/:id', (req, res) => {
  * @apiErrorExample {json} List error
  *   HTTP/1.1 500 Internal Server Error
  */
-app.get('/assets/:type', (req, res) => {
+app.get('/assets/type/:type', (req, res) => {
     const type = req.params.type;
-    db.all(`select * from assets where type = ${type}`, (err, rows) => {
+    db.all(`select * from assets where type like '${type}'`, (err, rows) => {
         //prints error, if err is not null
         err && console.log(err.message);
 
@@ -108,10 +109,9 @@ app.get('/assets/:type', (req, res) => {
  * @apiErrorExample {json} List error
  *   HTTP/1.1 500 Internal Server Error
  */
-app.get('/assets/:location', (req, res) => {
+app.get('/assets/location/:location', (req, res) => {
     const location = req.params.location;
-    //todo: regex or something -> CitySpace has to be same as cityspace - easier in URL
-    db.all(`select * from assets where location = ${location}`, (err, rows) => {
+    db.all(`select * from assets where upper(location) like upper('%${location}%')`, (err, rows) => {
         //prints error, if err is not null
         err && console.log(err.message);
 
@@ -119,59 +119,6 @@ app.get('/assets/:location', (req, res) => {
         (rows) ? res.jsonp(rows) : res.send('No assets with specified location');
     })
 })
-
-//TODO: maybe make parameter based queries? so there are more options for filtering
-/**
-// // GET /assets?type=__&?location=__ - show assets that passes the queries
-// // Shows all assets if there are no parameters
-// app.get('/assets', (req, res) => {
-
-//     console.log('query = ', req.query)
-
-//     //get the type and location params
-//     const type = req.query.type || null;
-//     const location = req.query.location || null;
-
-//     console.log(type, location);
-
-
-//     //logic based on type and location params
-//     switch (true) {
-//         //if type and location is not null
-//         case (type && location):
-//             db.all(`select * from assets where type = '${type}' and location = '${location}'`, (err, rows) => {
-//                 res.jsonp(rows);
-//             })
-//             break;
-
-//         //if type is not null, but location is
-//         case (type && !location):
-//             db.all(`select * from assets where type = '${type}'`, (err, rows) => {
-//                 res.jsonp(rows);
-//             })
-//             break;
-
-//         //if type is null, but location is not null
-//         case (!type && location):
-//             db.all(`select * from assets where location = '${location}'`, (err, rows) => {
-//                 res.jsonp(rows);
-//             })
-//             break;
-
-//         //if both queries are null
-//         case (!type && !location):
-//             db.all('select * from assets', (err, rows) => {
-//                 res.jsonp(rows);
-//             })
-//             break;
-
-//         default:
-//             res.send('No results');
-//             break;
-
-//     }
-// })
-**/
 
 
 /**
@@ -285,6 +232,53 @@ app.delete('/assets/:id', function (req, res) {
             res.end();
         });
 });
+
+// GET /assets/search?type=__&?location=__ - show assets that passes the queries
+// Shows all assets if there are no parameters
+app.get('/search', (req, res) => {
+
+    //get the type and location params
+    const type = req.query.type || null;
+    const location = req.query.location || null;
+
+    //logic based on type and location params
+    switch (true) {
+
+        //if type and location is not null
+        case (type !== null && location !== null):
+            db.all(`select * from assets where upper(type) like upper('%${type}%') AND upper(location) like upper('%${location}%')`, (err, rows) => {
+                //show results, or message if there are none
+                (rows) ? res.jsonp(rows) : res.send('No assets with specified queries');
+            })
+            break;
+
+        //if type is not null, but location is
+        case (type !== null && location === null):
+            //redirect to /type/:type
+            res.redirect(`../location/${type}`)
+
+            break;
+
+        //if type is null, but location is not null
+        case (type === null && location !== null):
+            //redirect to /location/:location
+            res.redirect(`../location/${location}`)
+            break;
+
+        //if both queries are null
+        case (type === null && location === null):
+            //redirect to /assets
+            res.redirect('../assets')
+            break;
+
+        default:
+            res.send('No results');
+            break;
+
+    }
+})
+
+
 
 //export for start.js - allows testing and publishing
 module.exports = app; 
