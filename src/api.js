@@ -31,9 +31,10 @@ const upload = multer();
 app.get('/assets', (req, res) => {
     db.all('select * from assets', (err, rows) => {
         //prints error, if err is not null
-        err && console.log(err.message)
+        err && console.log(err.message);
 
-        res.jsonp(rows);
+        //show results, or message if there are none
+        (rows) ? res.jsonp(rows) : res.send('No assets registered');
     })
 })
 
@@ -57,9 +58,10 @@ app.get('/assets/:id', (req, res) => {
     const id = req.params.id
     db.get(`select * from assets where id = ${id}`, (err, rows) => {
         //prints error, if err is not null
-        err && console.log(err.message)
+        err && console.log(err.message);
 
-        res.jsonp(rows);
+        //show results, or message if there are none
+        (rows) ? res.jsonp(rows) : res.send('No assets with specified id');
     })
 })
 
@@ -83,9 +85,10 @@ app.get('/assets/:type', (req, res) => {
     const type = req.params.type;
     db.all(`select * from assets where type = ${type}`, (err, rows) => {
         //prints error, if err is not null
-        err && console.log(err.message)
+        err && console.log(err.message);
 
-        res.jsonp(rows)
+        //show results, or message if there are none
+        (rows) ? res.jsonp(rows) : res.send('No assets with specified type');
     })
 })
 
@@ -110,9 +113,10 @@ app.get('/assets/:location', (req, res) => {
     //todo: regex or something -> CitySpace has to be same as cityspace - easier in URL
     db.all(`select * from assets where location = ${location}`, (err, rows) => {
         //prints error, if err is not null
-        err && console.log(err.message)
+        err && console.log(err.message);
 
-        res.jsonp(rows)
+        //show results, or message if there are none
+        (rows) ? res.jsonp(rows) : res.send('No assets with specified location');
     })
 })
 
