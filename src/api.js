@@ -1,5 +1,4 @@
 const express = require('express');
-const { redirect } = require('express/lib/response');
 const app = express();
 
 const sqlite3 = require('sqlite3').verbose();

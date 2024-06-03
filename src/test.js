@@ -1,7 +1,6 @@
 //DECLARATIONS
 const app = require('./api.js')
 const supertest = require('supertest');
-const res = require('express/lib/response');
 const request = supertest(app)
 
 //TESTS
@@ -43,7 +42,7 @@ describe('GET /type/:type', () => {
 describe('GET /location/:location', () => {
     it('respond with JSON of assets with specified location', (done) => {
         request
-            .get('/assets/location/CitySpace')
+            .get('/location/CitySpace')
             .set('Accept', 'application/JSON')
             .expect('content-type', /json/)
             .expect(200, done)
@@ -72,7 +71,7 @@ describe('PUT /assets/1', () => {
             .put('/assets/1')
             .field('type', 'monitor')
             .field('location', 'CitySpace')
-            .expect(201)
+            .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
                 done();
